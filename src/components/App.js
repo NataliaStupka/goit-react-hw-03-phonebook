@@ -1,4 +1,3 @@
-
 import { GlobalStyle } from './GlobalStyle';
 import React, { Component } from 'react';
 import { PhonebookTitle, ContactsTitle } from './App.styled';
@@ -6,23 +5,40 @@ import { PhonebookTitle, ContactsTitle } from './App.styled';
 import ContactForm from './ContactForm/ContactForm';
 import Filter from './Filter/Filter';
 import ContactList from './ContactList/ContactList';
-import { nanoid } from 'nanoid'
-
+import { nanoid } from 'nanoid';
 
 class App extends Component {
   state = {
-      contacts: [
-    {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
-    {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
-    {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
-    {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
-  ],
-      filter: '',
-      
+    contacts: [
+      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+    ],
+    filter: '',
   };
-  
-    //получае доступ при сабмите ContactForm к ее state
-    //добавляем новый контакт
+
+  // метод жизненого цикла Монтирование
+  componentDidMount() {
+    console.log('монтирование');
+  }
+
+  //жизн.цикл обновление
+  componentDidUpdate(prevState) {
+    console.log('Обновление');
+    console.log('prevState', prevState);
+    console.log('this.state', this.state);
+
+    //при каждом обновлении контактов перезаписываем в localStorage
+    const nextContacts = this.state.contacts;
+    const prevContacts = prevState.contacts;
+    if (nextContacts !== prevContacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts)); //так как это масив, то через stringify
+    }
+  }
+
+  //получае доступ при сабмите ContactForm к ее state
+  //добавляем новый контакт
   addContact = ({ name, number }) => {
     // console.log('как пропс на стр App', data); - деструктуризировали data на {name, number}
     const contact = {
@@ -32,18 +48,18 @@ class App extends Component {
     };
 
     const { contacts } = this.state;
-    if (contacts.find(
-      (contact) => contact.name.toLowerCase() === name.toLowerCase())
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === name.toLowerCase()
+      )
     ) {
-     return alert(`${name} is already in contacts`);
-    };
-   
-    this.setState(prevState => ({
-      contacts: [contact, ...prevState.contacts]
-    }))
-  };
-  
+      return alert(`${name} is already in contacts`);
+    }
 
+    this.setState(prevState => ({
+      contacts: [contact, ...prevState.contacts],
+    }));
+  };
 
   deleteContact = contactId => {
     // console.log('delete', contactId);
@@ -54,7 +70,7 @@ class App extends Component {
 
   changeFilter = event => {
     this.setState({ filter: event.currentTarget.value });
-}
+  };
 
   getVisibleContacts = () => {
     const { filter, contacts } = this.state;
@@ -62,10 +78,10 @@ class App extends Component {
     const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter),
+      contact.name.toLowerCase().includes(normalizedFilter)
     );
-  }
-  
+  };
+
   render() {
     //деструктуризация
     const { filter } = this.state;
@@ -78,22 +94,19 @@ class App extends Component {
         <GlobalStyle />
         <PhonebookTitle>Phonebook</PhonebookTitle>
         {/* <FormikForm /> */}
-        <ContactForm onSubmit={this.addContact}/>
-        
+        <ContactForm onSubmit={this.addContact} />
+
         <ContactsTitle>Contacts</ContactsTitle>
         <section>
-        <Filter value={filter} onChange={this.changeFilter} />
-        <ContactList
-          options={visibleContact}
-          onDeleteContact={this.deleteContact}
-          /> 
+          <Filter value={filter} onChange={this.changeFilter} />
+          <ContactList
+            options={visibleContact}
+            onDeleteContact={this.deleteContact}
+          />
         </section>
-        
-        
       </div>
-    )
+    );
+  }
 }
-}
-
 
 export default App;
