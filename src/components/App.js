@@ -19,67 +19,73 @@ class App extends Component {
   };
 
   // метод жизненого цикла Монтирование
+    //сохраним в localStorage изначальные contacts
   componentDidMount() {
-    console.log('монтирование');
-  }
+    // console.log('Монтирование');
 
-  //жизн.цикл обновление
+    const contacts = localStorage.getItem('contacts');    //получаем строку, распарсим ее
+    const parsedContacts = JSON.parse(contacts); 
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  };
+
+  //метод жизненого цикла Oбновление
   componentDidUpdate(prevState) {
-    console.log('Обновление');
-    console.log('prevState', prevState);
-    console.log('this.state', this.state);
+    // console.log('Обновление');
 
-    //при каждом обновлении контактов перезаписываем в localStorage
+      //при каждом обновлении контактов перезаписываем в localStorage
     const nextContacts = this.state.contacts;
     const prevContacts = prevState.contacts;
     if (nextContacts !== prevContacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts)); //так как это масив, то через stringify
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));             //так как это масив, то через stringify
     }
-  }
+  };
+
 
   //получае доступ при сабмите ContactForm к ее state
   //добавляем новый контакт
   addContact = ({ name, number }) => {
-    // console.log('как пропс на стр App', data); - деструктуризировали data на {name, number}
-    const contact = {
-      id: nanoid(),
-      name,
-      number,
-    };
+      // console.log('как пропс на стр App', data); - деструктуризировали data на {name, number}
+      const contact = {
+        id: nanoid(),
+        name,
+        number,
+      };
 
-    const { contacts } = this.state;
-    if (
-      contacts.find(
-        contact => contact.name.toLowerCase() === name.toLowerCase()
-      )
-    ) {
-      return alert(`${name} is already in contacts`);
-    }
+      const { contacts } = this.state;
+      if (
+        contacts.find(
+          contact => contact.name.toLowerCase() === name.toLowerCase()
+        )
+      ) {
+        return alert(`${name} is already in contacts`);
+      }
 
-    this.setState(prevState => ({
-      contacts: [contact, ...prevState.contacts],
-    }));
+      this.setState(prevState => ({
+        contacts: [contact, ...prevState.contacts],
+      }));
   };
 
   deleteContact = contactId => {
-    // console.log('delete', contactId);
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
+      // console.log('delete', contactId);
+      this.setState(prevState => ({
+        contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+      }));
   };
 
   changeFilter = event => {
-    this.setState({ filter: event.currentTarget.value });
+      this.setState({ filter: event.currentTarget.value });
   };
 
   getVisibleContacts = () => {
-    const { filter, contacts } = this.state;
-    //для ФИЛЬТРАЦИИ приведем текст к одному toLowerCase()
-    const normalizedFilter = filter.toLowerCase();
+      const { filter, contacts } = this.state;
+      //для ФИЛЬТРАЦИИ приведем текст к одному toLowerCase()
+      const normalizedFilter = filter.toLowerCase();
 
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
+      return contacts.filter(contact =>
+        contact.name.toLowerCase().includes(normalizedFilter)
+      );
   };
 
   render() {
