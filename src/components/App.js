@@ -18,11 +18,8 @@ class App extends Component {
     filter: '',
   };
 
-  // метод жизненого цикла Монтирование
-    //сохраним в localStorage изначальные contacts
+    //в localStorage изначальные contacts
   componentDidMount() {
-    // console.log('Монтирование');
-
     const contacts = localStorage.getItem('contacts');    //получаем строку, распарсим ее
     const parsedContacts = JSON.parse(contacts); 
     if (parsedContacts) {
@@ -30,10 +27,9 @@ class App extends Component {
     }
   };
 
-  //метод жизненого цикла Oбновление
+  //Oбновление
   componentDidUpdate(prevState) {
-    // console.log('Обновление');
-
+    
       //при каждом обновлении контактов перезаписываем в localStorage
     const nextContacts = this.state.contacts;
     const prevContacts = prevState.contacts;
@@ -92,7 +88,7 @@ class App extends Component {
     //деструктуризация
     const { filter } = this.state;
 
-    //фильтрация, составляем новую колекцию и ресуем только ее
+    //фильтрация, составляем новую колекцию и рисуем только ее
     const visibleContact = this.getVisibleContacts();
 
     return (
